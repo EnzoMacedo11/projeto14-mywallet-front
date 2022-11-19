@@ -55,6 +55,7 @@ export default function Home() {
     SetNewOperation("");
     SetNewValue("");
     LeaveNone();
+    console.log(listOperation)
   }
   function addWalletpostive() {
     const newWallet = {
@@ -67,6 +68,7 @@ export default function Home() {
     SetNewOperation("");
     SetNewValue("");
     EntryNone();
+    console.log(listOperation2)
   }
 
   return (
@@ -130,7 +132,6 @@ export default function Home() {
 
       <NewEntry entry={entry}>
         <h1>Nova Entrada</h1>
-        <form>
           <input
             required
             type="number"
@@ -147,8 +148,7 @@ export default function Home() {
             value={newOperation}
             placeholder="Descrição"
           />
-          <Button onSubmit={addWalletpostive}>Salvar Entrada</Button>
-        </form>
+          <Button onClick={addWalletpostive}>Salvar Entrada</Button>
       </NewEntry>
       <NewLeave leave={leave}>
         <h1>Nova Saída</h1>
