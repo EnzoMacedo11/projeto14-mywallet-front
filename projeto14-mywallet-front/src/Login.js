@@ -11,31 +11,32 @@ export default function Login() {
   function sendLogin(event) {
     event.preventDefault();
     const info = { email: email, password: password };
-    const promisse = axios.post("http://localhost:5000/", info);
+    const promisse = axios.post("http://localhost:5000/signin", info);
     promisse.then((res) => {
       console.log(res.data);
       Navigate("/home");
     });
-    promisse.err((err) => {
+    promisse.catch((err) => {
       console.log(err);
     });
   }
   return (
     <Container>
       <h1>MyWallet</h1>
-      <form>
+      <form onSubmit={sendLogin}>
         <input
           onChange={(e) => setEmail(e.target.value)}
           value={email}
           placeholder="Email"
         />
         <input
+        type="password"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
           placeholder="Senha"
         />
 
-        <Button onSubmit={sendLogin}>Entrar</Button>
+        <Button type="submit">Entrar</Button>
       </form>
       <Link to={"/register"}>
         <h2>Primeira vez? Cadastre-se!</h2>
@@ -45,11 +46,10 @@ export default function Login() {
 }
 
 const Container = styled.div`
-  body {
-    height: 100%;
-  }
-  width: 100%;
-  height: 100%;
+
+
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

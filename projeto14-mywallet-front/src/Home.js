@@ -3,29 +3,26 @@ import styled from "styled-components";
 import image1 from "./img/Vector (1).png";
 import addnegative from "./img/ant-design_minus-circle-outlined.png";
 import addpositive from "./img/ant-design_plus-circle-outlined.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
+import axios from "axios";
 const DateA = dayjs().format("DD/MM");
 
 export default function Home() {
-  const [wallet, setWallet] = useState([]);
-  const [nOperation, setNOperation] = useState(0);
   const [entry, setEntry] = useState(false);
   const [leave, setLeave] = useState(false);
   const [walletV, setWalletV] = useState(true);
+  const [saldoF,setSaldoF] = useState(0);
 
   const [newOperation, SetNewOperation] = useState("");
   const [newValue, SetNewValue] = useState("");
 
-  const [listOperation, setListOperation] = useState([
-    // { date: DateA, operation: "Almoço mãe", value: "39,90" },
-    // { date: DateA, operation: "Almoço pai", value: "45,90" },
-  ]);
+  const [listOperation, setListOperation] = useState([]);
 
   const [listOperation2, setListOperation2] = useState([
-    // { date: DateA, operation: "Almoço mãe", value: "39,90" },
-    // { date: DateA, operation: "Almoço pai", value: "45,90" },
+   
   ]);
+
 
   function EntryVision() {
     setEntry(true);
@@ -50,26 +47,84 @@ export default function Home() {
       operation: newOperation,
       value: newValue,
     };
-    setListOperation([...listOperation, newWallet]);
-    setNOperation(+1);
+
+    const promisse = axios.post("http://localhost:5000/negativewallet", newWallet);
+    promisse.then((res) => {
+      console.log(res.data);
+
+    });
+    promisse.catch((err) => {
+      console.log(err);
+    });
+        
+    //setListOperation([...listOperation, newWallet]);
+    setSaldoF(saldoF - Number(newWallet.value));
     SetNewOperation("");
     SetNewValue("");
     LeaveNone();
-    console.log(listOperation)
+    //console.log(listOperation);
   }
+
+
   function addWalletpostive() {
     const newWallet = {
       date: DateA,
       operation: newOperation,
       value: newValue,
     };
-    setListOperation2([...listOperation2, newWallet]);
-    setNOperation(+1);
+
+    const promisse = axios.post("http://localhost:5000/positivewallet", newWallet);
+    promisse.then((res) => {
+      console.log(res.data);
+    });
+    promisse.catch((err) => {
+      console.log(err);
+    });
+
+
+    //setListOperation2([...listOperation2, newWallet]);
+    setSaldoF(saldoF + Number(newWallet.value))
     SetNewOperation("");
     SetNewValue("");
     EntryNone();
-    console.log(listOperation2)
+    //console.log(listOperation2);
+    
   }
+
+
+ 
+  useEffect(() => {
+  
+    axios
+      .get("http://localhost:5000/negativewallet")
+      .then((res) => {
+        console.log("aaa",res.data);
+        console.log("res.data.isUser", res.data.isUser)
+        setListOperation(res.data.isUser)
+        console.log(listOperation)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+   
+  useEffect(() => {
+  
+    axios
+      .get("http://localhost:5000/positivewallet")
+      .then((res) => {
+        console.log("aaa",res.data);
+        console.log("res.data.isUser", res.data.isUser)
+        setListOperation2(res.data.isUser)
+        console.log(listOperation2)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+
 
   return (
     <Container>
@@ -81,7 +136,7 @@ export default function Home() {
           </Link>
         </NavBar>
         <Work>
-          {nOperation === 0 ? (
+          {listOperation.length === 0 && listOperation2.length === 0   ? (
             <h3>Não há registros de entrada ou saída</h3>
           ) : (
             <div>
@@ -109,7 +164,7 @@ export default function Home() {
               ))}
               <Total>
                 <h1>Saldo</h1>
-                <h2>500</h2>
+                <h2>{saldoF}</h2>
               </Total>
             </div>
           )}
@@ -170,11 +225,9 @@ export default function Home() {
 }
 
 const Container = styled.div`
-  body {
-    height: 100%;
-  }
-  width: 100%;
-  height: 100%;
+
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -231,11 +284,10 @@ const NavBar = styled.div`
 `;
 
 const Work = styled.div`
+ position: relative;
   margin-top: 22px;
   width: 326px;
   height: 446px;
-  left: 25px;
-  top: 78px;
 
   background: #ffffff;
   border-radius: 5px;
@@ -428,6 +480,9 @@ const Detail = styled.div`
   }
 `;
 const Total = styled.div`
+  position: absolute;
+  bottom: 5px;
+  
   margin-top: 15px;
   display: flex;
   justify-content: space-between;
@@ -449,7 +504,8 @@ const Total = styled.div`
     font-weight: 400;
     font-size: 16px;
     line-height: 19px;
-    margin-right: 12px;
-    color: #03ac00;
+    margin-left:230px;
+    margin-right: 20px;
+    color: #000000;
   }
 `;

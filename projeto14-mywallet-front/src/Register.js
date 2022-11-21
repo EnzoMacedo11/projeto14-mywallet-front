@@ -14,12 +14,12 @@ export default function Register() {
   function sendRegister(event) {
     event.preventDefault();
     const info = { name:name, email: email, password: password };
-    const promisse = axios.post("http://localhost:5000/register", info);
+    const promisse = axios.post("http://localhost:5000/signup", info);
     promisse.then((res) => {
       console.log(res.data);
       Navigate("/");
     });
-    promisse.err((err) => {
+    promisse.catch((err) => {
       console.log(err);
     });
   }
@@ -27,7 +27,7 @@ export default function Register() {
   return (
     <Container>
       <h1>MyWallet</h1>
-      <form>
+      <form onSubmit={sendRegister}>
       <input
         onChange={(e) => setName(e.target.value)} 
         value={name}
@@ -39,16 +39,18 @@ export default function Register() {
         placeholder="Email"
       />
       <input
-        onChange={(e) => setPassword(e.target.value)} 
+        onChange={(e) => setPassword(e.target.value)}
+        type="password"
         value={password}
         placeholder="Senha"
       />
       <input
         onChange={(e) => setPasswordConfirmation(e.target.value)}
+        type="password"
         value={passwordConfirmation}
         placeholder="Confirme a senha"
       />
-      <Button onSubmit={sendRegister}>Cadastrar</Button>
+      <Button type="submit">Cadastrar</Button>
       </form>
       <Link to={"/"}><h2>Já tem uma conta? Entre agora!</h2></Link>
       
@@ -65,11 +67,8 @@ form {
     flex-direction: column;
   }
 
-body{
-  height: 100%;
-}
-width:100%;
-height:100%;
+width:100vw;
+height:100vh;
   display: flex;
   justify-content: center;
   align-items: center;
